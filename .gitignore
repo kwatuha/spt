@@ -1,0 +1,7 @@
+target/**/*
+.idea/**/*
+*.swp
+*~
+.DS_Store
+src/main/webapp/resources/ext/**/*
+src/main/webapp/resources/layout/**/*
