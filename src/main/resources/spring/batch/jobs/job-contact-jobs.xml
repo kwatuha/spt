@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		">
+
+    <!--<import resource="/spring/batch/config/context.xml" />-->
+    <import resource="../config/context.xml" />
+    <import resource="../config/database.xml" />
+    <!--<import resource="/spring/batch/config/database.xml" />-->
+    <bean id="contact" class="org.spt..model.Contact" scope="prototype" />
+    <bean id="itemProcessor" class="org.spt.service.EmailQueueProcessor" />
+    <bean id="pagingItemReader"
+          class="org.springframework.batch.item.database.JdbcPagingItemReader"
+          scope="step">
+        <property name="dataSource" ref="dataSource" />
+        <property name="queryProvider">
+            <bean
+                    class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+                <property name="dataSource" ref="dataSource" />
+                <property name="selectClause" value="select id, pf_number, first_name, middle_name,last_name,email_address,id_number" />
+                <property name="fromClause" value="from contacts" />
+                <!--<property name="whereClause" value="where user_login=:name" />-->
+                <property name="sortKey" value="id" />
+            </bean>
+        </property>
+        <property name="parameterValues">
+            <map>
+                <!--<entry key="name" value="#{jobParameters['name']}" />-->
+            </map>
+        </property>
+        <property name="pageSize" value="3" />
+        <property name="rowMapper">
+            <bean class="org.spt.model.ContactRowMapper" />
+        </property>
+    </bean>
+
+
+    <job id="testJob" xmlns="http://www.springframework.org/schema/batch">
+        <step id="step1">
+            <tasklet>
+                <chunk reader="pagingItemReader" writer="itemWriter"  processor="itemProcessor"
+                       commit-interval="1" />
+            </tasklet>
+        </step>
+
+        <!--<step id="step2" >-->
+            <!--<tasklet ref="fileDeletingTasklet" />-->
+        <!--</step>-->
+    </job>
+
+    <bean id="itemWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
+        <property name="resource" value="file:xml/outputs/contacts.xml" />
+        <property name="marshaller" ref="contactUnmarshaller" />
+        <property name="rootTagName" value="contacts" />
+    </bean>
+
+    <bean id="contactUnmarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+        <property name="aliases">
+            <util:map id="aliases">
+                <entry key="contact" value="org.spt.model.Contact" />
+            </util:map>
+        </property>
+    </bean>
+
+</beans>

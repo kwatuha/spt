@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.spt.model.ExtJSFormResult;
+import org.spt.properties.Batch;
 import org.spt.properties.Config;
 import org.spt.properties.SptConstants;
 import org.spt.service.DocumentService;
@@ -32,8 +33,8 @@ public class QueueController {
 
         String clearQueue= Config.getProperty(SptConstants.GP_SPT_FILE_DIR)+queue;
 
-        documentService.clearFileDir(clearQueue);
-
+       // documentService.clearFileDir(clearQueue);
+        Batch.run();
         extjsFormResult.setSuccess(true);
 
         return extjsFormResult.toString();

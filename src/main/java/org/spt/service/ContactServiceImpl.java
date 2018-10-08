@@ -52,9 +52,26 @@ public class ContactServiceImpl implements ContactService {
 
         for(Contact contact : contacts) {
             if ( StringUtils.isNotBlank(contact.getPfNumber()) && StringUtils.isNotBlank(contact.getPfNumber()) && StringUtils.isNotBlank(contact.getIdNumber())
+                    && StringUtils.isNotBlank(contact.getEmailAddress())
                     ) {
-                Contact newContact = contactDao.addContact(contact);
-                data.add(newContact);
+                List<Contact> existingEmail = new ArrayList<Contact>();
+                existingEmail = this.searchForContact(contact.getEmailAddress());
+                System.out.println(contact.getEmailAddress()+"==xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"+existingEmail.size());
+                if(existingEmail.size()>0){
+                    Contact updatedConctact = new Contact();
+                    updatedConctact= existingEmail.get(0);
+                    updatedConctact.setLastName(contact.getLastName());
+                    updatedConctact.setMiddleName(contact.getMiddleName());
+                    updatedConctact.setFirstName(contact.getFirstName());
+                    updatedConctact.setPfNumber(contact.getPfNumber());
+                    updatedConctact.setIdNumber(contact.getIdNumber());
+                    contactDao.updateContact(updatedConctact);
+                    data.add(updatedConctact);
+                }else{
+                    Contact newContact = contactDao.addContact(contact);
+                    data.add(newContact);
+                }
+
             }
         }
 
@@ -66,9 +83,13 @@ public class ContactServiceImpl implements ContactService {
 
         List<Contact> data = new ArrayList<Contact>();
 
+
         for(Contact contact : contacts) {
-            Contact updatedContact = contactDao.updateContact(contact);
-            data.add(updatedContact);
+
+                Contact updatedContact = contactDao.updateContact(contact);
+                data.add(updatedContact);
+
+
         }
 
         return data;
@@ -112,9 +133,29 @@ public class ContactServiceImpl implements ContactService {
                                 contact.setEmailAddress(contactData[4].trim());
                                 contact.setIdNumber(contactData[5].trim());
 
-                                if(countRows>0){
+                    if ( StringUtils.isNotBlank(contact.getPfNumber()) && StringUtils.isNotBlank(contact.getPfNumber()) && StringUtils.isNotBlank(contact.getIdNumber())
+                            && StringUtils.isNotBlank(contact.getEmailAddress())
+                            ) {
+                        if (countRows > 0) {
+                            List<Contact> existingEmail = new ArrayList<Contact>();
+                            existingEmail = this.searchForContact(contact.getEmailAddress());
+                            System.out.println(contact.getEmailAddress() + "==xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" + existingEmail.size());
+
+                            if (existingEmail.size() > 0) {
+                                Contact updatedConctact = new Contact();
+                                updatedConctact = existingEmail.get(0);
+                                updatedConctact.setLastName(contact.getLastName());
+                                updatedConctact.setMiddleName(contact.getMiddleName());
+                                updatedConctact.setFirstName(contact.getFirstName());
+                                updatedConctact.setPfNumber(contact.getPfNumber());
+                                updatedConctact.setIdNumber(contact.getIdNumber());
+                                contactDao.updateContact(updatedConctact);
+                            } else {
                                 contactDao.addContact(contact);
-                                }
+                            }
+
+                        }
+                    }
                     countRows++;
 
                 }

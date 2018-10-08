@@ -1,9 +1,13 @@
-function uploadFile(title, fileType) {
-    var viewdiv = document.getElementById('center-info');
-    viewdiv.innerHTML = '';
-    Ext.onReady(function () {
+function createUploadForm(displayhere,fileType,title){
 
-        Ext.apply(Ext.form.VTypes, {
+var obj=document.getElementById(displayhere);
+
+obj.innerHTML='';
+
+
+Ext.onReady(function() {
+Ext.tip.QuickTipManager.init();
+Ext.apply(Ext.form.VTypes, {
             payrollFileUpload: function (val, field) {
                 var fileName = /^.*\.(pdf)$/i;
                 return fileName.test(val);
@@ -20,16 +24,29 @@ function uploadFile(title, fileType) {
             contactUploadText: 'File must be in .csv format'
         });
 
-
-        Ext.create('Ext.form.Panel', {
-            title: title,
-            width: 400,
-            bodyPadding: 10,
-            frame: true,
-            renderTo: 'center-info',
-            items: [{
+var formWin = Ext.create('Ext.window.Window', {
+            id: 'uploadForm',
+            width:400,
+            height:200,
+            title: false,
+            autoScroll: true,
+            border: false,
+            renderTo:'center-info-v',
+            layout: 'fit',
+            closable:true,
+            maximizable:true,
+            animCollapse:false,
+            constrainHeader:true,
+            resizable:true,
+            title:title,
+            items: [
+                    {
+                        border: false,
+                        xtype: 'form',
+                        items: [{
                 xtype: 'filefield',
                 vtype: fileType,
+                padding:10,
                 name: 'file',
                 fieldLabel: 'File',
                 labelWidth: 50,
@@ -40,7 +57,7 @@ function uploadFile(title, fileType) {
             }],
 
             buttons: [{
-                text: 'Upload',
+                text: 'Upload File',
                 handler: function () {
                     var form = this.up('form').getForm();
                     if (form.isValid()) {
@@ -54,8 +71,16 @@ function uploadFile(title, fileType) {
                     }
                 }
             }]
+        }
+    ]
+            
+
         });
-    });
+
+       formWin.show();
+
+});
+
 }
 
 function createContactForm() {

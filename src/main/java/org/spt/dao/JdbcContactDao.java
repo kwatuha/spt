@@ -64,7 +64,7 @@ public class JdbcContactDao implements ContactDao {
         params.put("criteria","%" + criteria + "%");
 
         List<Contact> contacts = this.simpleJdbcTemplate.query(
-				SQL_SELECT + "WHERE first_name LIKE :criteria OR last_name LIKE :criteria",
+				SQL_SELECT + "WHERE first_name LIKE :criteria OR last_name LIKE :criteria  OR middle_name LIKE :criteria  OR email_address LIKE :criteria",
 				BeanPropertyRowMapper.newInstance(Contact.class), params);
 
         return contacts;
