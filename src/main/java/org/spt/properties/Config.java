@@ -12,9 +12,9 @@ public class Config {
     static {
         try {
 
-            String currentDir = System.getProperty("user.dir");
-            System.out.println("Current dir using System:" +currentDir);
+            String currentDir = System.getProperty("java.home");
 
+             String pathws=Config.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
             /**
              * Realized relative paths were working inconsistently depending on how tomcat was started
@@ -23,8 +23,11 @@ public class Config {
             String path=Config.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             String paths[]= path.split("webapps");
             String confFilePath=paths[0]+"/conf/spt.properties";
-            String confAutho2Path=paths[0]+"/conf/kwatuhaspt.json";
+            // String confAutho2Path=paths[0]+"/conf/kwatuhaspt.json";
             FileInputStream in = new FileInputStream(confFilePath);
+
+                      
+
             defaultProps.load(in);
             in.close();
         } catch (Exception e) {
@@ -32,6 +35,8 @@ public class Config {
         }
     }
     public static String getProperty(String key) {
+
+         System.out.println(key+"===Current dir using System xxxxxxxx:" +defaultProps.getProperty(key));
         return defaultProps.getProperty(key);
     }
 }

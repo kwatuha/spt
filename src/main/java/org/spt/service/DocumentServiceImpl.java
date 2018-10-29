@@ -54,7 +54,6 @@ public class DocumentServiceImpl implements DocumentService {
    public void splitPdf(final String source, final String destFolder) throws IOException {
 
         PdfDocument pdfDoc = new PdfDocument(new com.itextpdf.kernel.pdf.PdfReader(source));
-
         final List<PdfDocument> splitDocuments = new PdfSplitter(pdfDoc) {
             int partNumber = 1;
             @Override

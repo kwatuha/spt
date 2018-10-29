@@ -139,7 +139,7 @@ public class ContactServiceImpl implements ContactService {
                         if (countRows > 0) {
                             List<Contact> existingEmail = new ArrayList<Contact>();
                             existingEmail = this.searchForContact(contact.getEmailAddress());
-                            System.out.println(contact.getEmailAddress() + "==xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" + existingEmail.size());
+                            // System.out.println(contact.getEmailAddress() + "==xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" + existingEmail.size());
 
                             if (existingEmail.size() > 0) {
                                 Contact updatedConctact = new Contact();

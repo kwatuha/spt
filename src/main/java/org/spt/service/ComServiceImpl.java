@@ -66,7 +66,7 @@ public class ComServiceImpl implements ComService {
             BodyPart messageBodyPart = new MimeBodyPart();
 
             //message is set to empty
-            messageBodyPart.setText(" ");
+            messageBodyPart.setText("Please find attached payslip ");
 
             // Create a multipar message
             multipart.addBodyPart(messageBodyPart);

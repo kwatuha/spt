@@ -75,7 +75,6 @@ public class EmailController {
         }
 
         if(StringUtils.contains(queue,"no_contacts")){
-
             documentService.encryptDirFiles(noContactDir, encryptedDir,noContactDir);
 
             isSent= comService.emailAllContacts(
