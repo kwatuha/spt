@@ -240,6 +240,13 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
+        <!-- Adding barcode4j -->
+        <dependency>
+            <groupId>net.sf.barcode4j</groupId>
+            <artifactId>barcode4j</artifactId>
+            <version>2.1</version>
+        </dependency>
+
 
         <!-- Test dependencies -->
         <dependency>

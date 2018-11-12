@@ -1,5 +1,5 @@
 package org.spt.model;
-
+import java.util.Date;
 public class Contact {
 
     private Integer id;
