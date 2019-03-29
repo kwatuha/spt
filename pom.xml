@@ -328,7 +328,7 @@
     </dependencies>
     <build>
         <plugins>
-            <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
@@ -338,8 +338,8 @@
                     <target>1.6</target>
                     <showWarnings>true</showWarnings>
                 </configuration>
-            </plugin> -->
-            <!-- <plugin>
+            </plugin> 
+             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.6</version>
@@ -348,15 +348,15 @@
                         <include>**/*Tests.java</include>
                     </includes>
                 </configuration>
-            </plugin> -->
-            <!-- <plugin>
+            </plugin> 
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
                 <configuration>
                     <warName>spt</warName>
                 </configuration>
-            </plugin> -->
+            </plugin>
         </plugins>
     </build>
 </project>

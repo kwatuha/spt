@@ -14,13 +14,12 @@ import org.spt.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 /**
- *  Controller for Contacts
+ * Controller for Contacts
  */
 @Controller
 @RequestMapping("/contacts")
@@ -36,26 +35,29 @@ public class ContactController {
     private ComService comService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody ExtResponse getContacts(
-            @RequestParam(value = "listType") String selectType
-    )  throws DocumentException,IOException {
+    public @ResponseBody ExtResponse getContacts(@RequestParam(value = "listType") String selectType)
+            throws DocumentException, IOException {
 
-        logger.info("getContacts called" +selectType);
+        logger.info("getContacts called" + selectType);
 
         ExtData data = new ExtData();
 
-        List<Contact> contacts=new ArrayList<Contact>();
+        List<Contact> contacts = new ArrayList<Contact>();
 
-        if(selectType.equalsIgnoreCase("queue")){
-          contacts = comService.pendingFilesContacts(Config.getProperty(SptConstants.GP_SPT_ENCRYPTED_FILE_DIR), contactService.getAllContacts());;
+        if (selectType.equalsIgnoreCase("queue")) {
+            contacts = comService.pendingFilesContacts(Config.getProperty(SptConstants.GP_SPT_ENCRYPTED_FILE_DIR),
+                    contactService.getAllContacts());
+            ;
         }
 
-        if(selectType.equalsIgnoreCase("contacts")){
+        if (selectType.equalsIgnoreCase("contacts")) {
             contacts = contactService.getAllContacts();
         }
 
-        if(selectType.equalsIgnoreCase("no_contacts")){
-            contacts = contactService.getMissingContacts(Config.getProperty(SptConstants.GP_PF_HAS_NO_EMAIL_ADDRESS_DIR));
+        if (selectType.equalsIgnoreCase("no_contacts")) {
+            contacts = contactService
+                    .getMissingContacts(Config.getProperty(SptConstants.GP_PF_HAS_NO_EMAIL_ADDRESS_DIR));
+            contactService.addMissingAddress(contacts, "No Email");
         }
 
         data.add(contacts);
@@ -65,7 +67,8 @@ public class ContactController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody ExtResponse addContacts(@RequestBody Contact[] contacts) throws DocumentException,IOException {
+    public @ResponseBody ExtResponse addContacts(@RequestBody Contact[] contacts)
+            throws DocumentException, IOException {
 
         logger.info("addContacts called");
 

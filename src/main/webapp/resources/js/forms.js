@@ -219,7 +219,7 @@ function getBouncedMessages() {
             Ext.Msg.alert('Success', 'Searching Completed');
         },
         failure: function (fp, o) {
-            Ext.Msg.failure('Error', 'Your email has could not send');
+            Ext.Msg.alert('Error', 'Your email has could not send');
         }
     });
 }
@@ -234,7 +234,7 @@ function deleteMessages(queue) {
             Ext.Msg.alert('Success', 'Deleted');
         },
         failure: function (fp, o) {
-            Ext.Msg.failure('Error', 'Queue could not be cleared');
+            Ext.Msg.alert('Error', 'Queue could not be cleared');
         }
     });
 }

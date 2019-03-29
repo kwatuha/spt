@@ -26,5 +26,8 @@ public interface ContactService {
     public void uploadContactsFile(String contactsFilePath) throws IOException;
 
     List<Contact> getMissingContacts(String missingContactsDir);
+
+    public void addMissingAddress(List<Contact> contacts,String reason);
+    public void addMissingAddress(Contact contact, String reason);
 }
 

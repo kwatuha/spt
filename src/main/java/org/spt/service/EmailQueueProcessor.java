@@ -10,8 +10,6 @@ public class EmailQueueProcessor implements ItemProcessor<Contact, Contact>  {
 
     @Override
     public Contact process(Contact item) throws Exception {
-
-        System.out.println("Processing...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" + item.getFirstName());
         return item;
     }
 

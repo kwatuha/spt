@@ -49,6 +49,7 @@ public class FileUploadController {
         FileOutputStream out = null;
 
         try{
+            System.out.println("dddddddddddddddddddddddddddddddddddddd"+Config.getProperty(SptConstants.GP_SPT_UPLOADED)+ uploadItem.getFile().getOriginalFilename());
             out = new FileOutputStream(new File(Config.getProperty(SptConstants.GP_SPT_UPLOADED)+ uploadItem.getFile().getOriginalFilename()));
             int read = 0;
             final byte[] bytes = new byte[1024];
@@ -74,16 +75,26 @@ public class FileUploadController {
 
         // If pdf, uploading payroll file
          if(StringUtils.equals(fileType,"pdf")){
-                documentService.splitPdf(
+            try{    
+            documentService.splitPdf(
                         Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename(),
                         Config.getProperty(SptConstants.GP_SPT_QUEUED_FILE_DIR)
                 );
-
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            
+            try{
                 documentService.encryptDirFiles(
                         Config.getProperty(SptConstants.GP_SPT_QUEUED_FILE_DIR),
                         Config.getProperty(SptConstants.GP_SPT_ENCRYPTED_FILE_DIR),
                         Config.getProperty(SptConstants.GP_PF_HAS_NO_EMAIL_ADDRESS_DIR)
                 );
+            } catch(Exception e){
+                 e.printStackTrace();
+            }
+
+
 
             }
          // If csv, uploading contacts file

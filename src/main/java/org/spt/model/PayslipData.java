@@ -5,6 +5,7 @@ public class PayslipData {
     private Integer id;
     private String payPeriod;
     private String pfNumber;
+    private String pinNumber;
     private String empName;
 
 
@@ -24,6 +25,14 @@ public class PayslipData {
         this.payPeriod = payPeriod;
     }
 
+    public String getPinNumber() {
+        return pinNumber;
+    }
+
+    public void   setPinNumber(String pinNumber) {
+        this.pinNumber = pinNumber;
+    }
+    
     public String getPfNumber() {
         return pfNumber;
     }

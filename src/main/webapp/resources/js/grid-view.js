@@ -56,7 +56,7 @@ function emailQueue() {
             if(window.navigator.onLine===true){
                 confirmToSendEMail('encrypted', 'Are you sure you want to send all queued messages?');
             }else{
-                showloginerror('Error', 'Please connect to an internet network');
+                showloginerror('Internet Connection Error', 'Please connect to an internet network');
             }
 
         }
@@ -145,7 +145,14 @@ var closebtn= Ext.get('close-btn');
             { header: 'Middle Name', width: 120, sortable: true, id: 'middleName', dataIndex: 'middleName' },
             { header: 'Last Name', width: 120, sortable: true, id: 'lastName', dataIndex: 'lastName' },
             { header: 'PF Number', width: 100, sortable: true, id: 'pfNumber', dataIndex: 'pfNumber' },
-            { header: 'Email Address', width: 250, sortable: true, id: 'emailAddress', dataIndex: 'emailAddress' }
+            { header: 'Email Address xx', width: 250, sortable: true, id: 'emailAddress', dataIndex: 'emailAddress' },
+            { header: 'Edit', width: 50, sortable: true, id: 'id', dataIndex: 'id',
+            icon   : '../../resources/ext/shared/icons/fam/editcontactrow.gif',
+            tooltip: 'Sell stock',
+            handler: function(grid, rowIndex, colIndex) {
+                var rec = store.getAt(rowIndex);
+                alert('sssssssssssssss ===='+rec);
+            } }
         
         ],
         }

@@ -9,6 +9,7 @@ public class Contact {
     private String idNumber;
     private String pfNumber;
     private String emailAddress;
+    private String other;
 
 
     public Integer getId() {
@@ -62,6 +63,12 @@ public class Contact {
     }
     public void setPfNumber(String pfNumber) {
         this.pfNumber = pfNumber;
+    }
+    public String getOther() {
+        return other;
+    }
+    public void setOther(String other) {
+        this.other = other;
     }
 
 
