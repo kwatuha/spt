@@ -68,6 +68,7 @@ public class ContactServiceImpl implements ContactService {
                     updatedConctact.setFirstName(contact.getFirstName());
                     updatedConctact.setPfNumber(contact.getPfNumber());
                     updatedConctact.setIdNumber(contact.getIdNumber());
+                    updatedConctact.setKraPinNumber(contact.getKraPinNumber());
                     contactDao.updateContact(updatedConctact);
                     data.add(updatedConctact);
                 } else {
@@ -133,6 +134,7 @@ public class ContactServiceImpl implements ContactService {
                 contact.setLastName(contactData[3].trim());
                 contact.setEmailAddress(contactData[4].trim());
                 contact.setIdNumber(contactData[5].trim());
+                contact.setKraPinNumber(contactData[7].trim());
 
                 if (StringUtils.isNotBlank(contact.getPfNumber()) && StringUtils.isNotBlank(contact.getPfNumber())
                         && StringUtils.isNotBlank(contact.getIdNumber())
@@ -149,6 +151,7 @@ public class ContactServiceImpl implements ContactService {
                             updatedConctact.setFirstName(contact.getFirstName());
                             updatedConctact.setPfNumber(contact.getPfNumber());
                             updatedConctact.setIdNumber(contact.getIdNumber());
+                            updatedConctact.setKraPinNumber(contact.getKraPinNumber());
                             contactDao.updateContact(updatedConctact);
                         } else {
                             contactDao.addContact(contact);
@@ -192,17 +195,24 @@ public class ContactServiceImpl implements ContactService {
 
                 try {
                     if (employeeNames.length > 1) {
-                        if (employeeNames.length > 1)
+                        if (employeeNames.length == 2) {
+                            contact.setFirstName(employeeNames[0].trim());
+                            contact.setLastName(employeeNames[1].trim());
+                        }
+
+                        if (employeeNames.length >= 3)
                             contact.setFirstName(employeeNames[2].trim());
-                        if (employeeNames.length > 2)
+                        if (employeeNames.length >= 4)
                             contact.setMiddleName(employeeNames[3].trim());
-                        if (employeeNames.length > 3)
+                        if (employeeNames.length >= 5)
                             contact.setLastName(employeeNames[4].trim());
                         contact.setPfNumber(payslipFile.getPfNumber());
+                        contact.setKraPinNumber(payslipFile.getPinNumber());
                         contacts.add(contact);
+
                     }
                 } catch (Exception e) {
-                    System.out.println("xxxxxxxxxxxxxxxDDDDD=" + employeeNames.length);
+
                     e.printStackTrace();
                 }
 

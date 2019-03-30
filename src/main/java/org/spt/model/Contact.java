@@ -10,7 +10,7 @@ public class Contact {
     private String pfNumber;
     private String emailAddress;
     private String other;
-
+    private String kraPinNumber;
 
     public Integer getId() {
         return id;
@@ -55,23 +55,33 @@ public class Contact {
     public String getEmailAddress() {
         return emailAddress;
     }
+
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
+
     public String getPfNumber() {
         return pfNumber;
     }
+
     public void setPfNumber(String pfNumber) {
         this.pfNumber = pfNumber;
     }
+
     public String getOther() {
         return other;
     }
+
     public void setOther(String other) {
         this.other = other;
     }
 
+    public String getKraPinNumber() {
+        return kraPinNumber;
+    }
 
-
+    public void setKraPinNumber(String kraPinNumber) {
+        this.kraPinNumber = kraPinNumber;
+    }
 
 }

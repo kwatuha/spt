@@ -121,17 +121,19 @@ public class ComServiceImpl implements ComService {
     public boolean emailAllContacts(String attachmentsFolder, final String username, final String password,
             List<Contact> contactsList) throws IOException, DocumentException {
         boolean isSent = false;
-        for (Contact contact : contactsList) {
 
-            // String filePath = attachmentsFolder + contact.getPfNumber() + ".pdf";
-            String efilePath = getFileFromPath(attachmentsFolder, contact.getPfNumber());
-            String filePath = attachmentsFolder + efilePath;
-            File varTmpDir = new File(filePath);
-            boolean exists = varTmpDir.exists();
+        List<Contact> contactsWithPendingData = new ArrayList<Contact>();
+        File[] files = new File(attachmentsFolder).listFiles();
 
-            if (exists) {
+        for (File f : files) {
+            int i = f.getName().lastIndexOf("_");
+            String searchKys[] = f.getName().substring(i + 1).split(".pdf");
+            List<Contact> contacts = null;
+            contacts = contactService.searchContactByPf(searchKys[0]);
+            if (contacts.size() == 1) {
+
                 try {
-                    isSent = this.sendEmail(filePath, username, password, contact.getEmailAddress());
+                    isSent = this.sendEmail(f.getName(), username, password, contacts.get(0).getEmailAddress());
                     if (!isSent) {
                         return isSent;
                     }
@@ -149,31 +151,20 @@ public class ComServiceImpl implements ComService {
     public List<Contact> pendingFilesContacts(String attachmentsFolder, List<Contact> contactsList)
             throws IOException, DocumentException {
         List<Contact> contactsWithPendingData = new ArrayList<Contact>();
-        for (Contact contact : contactsList) {
-            String filePath = attachmentsFolder + contact.getPfNumber() + ".pdf";
-            String efile = getFileFromPath(attachmentsFolder, contact.getPfNumber());
-            File varTmpDir = new File(attachmentsFolder + efile);
-            System.out.println("----" + attachmentsFolder + efile);
-            boolean exists = varTmpDir.exists();
-            if (exists) {
-                try {
-                    contactsWithPendingData.add(contact);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return contactsWithPendingData;
-    }
-
-    private String getFileFromPath(String path, String pf_number) throws IOException {
-        File[] files = new File(path).listFiles();
+        File[] files = new File(attachmentsFolder).listFiles();
 
         for (File f : files) {
-            if (f.getName().toLowerCase().indexOf("_" + pf_number + ".pdf") != -1)
-                return f.getName();
+            int i = f.getName().lastIndexOf("_");
+            String searchKys[] = f.getName().substring(i + 1).split(".pdf");
+            List<Contact> contacts = null;
+            contacts = contactService.searchContactByPf(searchKys[0]);
+            if (contacts.size() == 1) {
+                contactsWithPendingData.add(contacts.get(0));
+            }
+            // System.out.println(searchKys[0] + "==DDD^^^^^^^^DDDDD==" );
         }
-        return null;
+
+        return contactsWithPendingData;
     }
 
 }

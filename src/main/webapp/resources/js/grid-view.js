@@ -49,7 +49,7 @@ function getEmployeesWithoutEmail() {
 function emailQueue() {
  
     var toolBars = [{
-        text: 'Send Payslips',
+        text: 'Send Queued Data',
         tooltip: '',
         iconCls: 'email',
         handler: function () {
@@ -91,7 +91,9 @@ var closebtn= Ext.get('close-btn');
             { name: 'lastName', type: 'string' },
             { name: 'pfNumber', type: 'string' },
             { name: 'idNumber', type: 'string' },
-            { name: 'emailAddress', type: 'string' }]
+            { name: 'emailAddress', type: 'string' },
+            { name: 'kraPinNumber', type: 'string' }
+        ]
 	});
 	var store = Ext.create('Ext.data.Store', {
     model: 'GridViewDataModel',
@@ -145,7 +147,8 @@ var closebtn= Ext.get('close-btn');
             { header: 'Middle Name', width: 120, sortable: true, id: 'middleName', dataIndex: 'middleName' },
             { header: 'Last Name', width: 120, sortable: true, id: 'lastName', dataIndex: 'lastName' },
             { header: 'PF Number', width: 100, sortable: true, id: 'pfNumber', dataIndex: 'pfNumber' },
-            { header: 'Email Address xx', width: 250, sortable: true, id: 'emailAddress', dataIndex: 'emailAddress' },
+            { header: 'KRA Pin', width: 100, sortable: true, id: 'kraPinNumber', dataIndex: 'kraPinNumber' },
+            { header: 'Email Address', width: 250, sortable: true, id: 'emailAddress', dataIndex: 'emailAddress' },
             { header: 'Edit', width: 50, sortable: true, id: 'id', dataIndex: 'id',
             icon   : '../../resources/ext/shared/icons/fam/editcontactrow.gif',
             tooltip: 'Sell stock',

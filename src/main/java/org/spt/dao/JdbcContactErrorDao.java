@@ -22,39 +22,32 @@ import java.util.*;
 public class JdbcContactErrorDao implements ContactErrorDao {
 
     private final static String SQL_SELECT = "SELECT id, last_name,middle_name,first_name, pf_number,id_number,email_address FROM no_email_contacts ";
-    private final static String SQL_UPDATE = "UPDATE no_email_contacts set first_name = :firstName, last_name = :lastName,middle_name = :middleName " +
-            " ,email_address = :emailAddress " +
-            " ,pf_number = :pfNumber " +
-            " ,id_number = :idNumber " +
-            "WHERE id = :id";
+    private final static String SQL_UPDATE = "UPDATE no_email_contacts set first_name = :firstName, last_name = :lastName,middle_name = :middleName "
+            + " ,email_address = :emailAddress " + " ,pf_number = :pfNumber " + " ,id_number = :idNumber "
+            + "WHERE id = :id";
     private final static String SQL_DELETE = "DELETE FROM no_email_contacts WHERE id = ?";
     private SimpleJdbcTemplate simpleJdbcTemplate;
     private SimpleJdbcInsert simpleInsert;
 
-
     @Autowired
-	public void init(DataSource dataSource) {
-		this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+    public void init(DataSource dataSource) {
+        this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
         this.simpleInsert = new SimpleJdbcInsert(dataSource);
         this.simpleInsert.withTableName("no_email_contacts").usingGeneratedKeyColumns("id");
 
-
-	}
+    }
 
     @Override
     @Transactional(readOnly = true)
     public Contact findById(Integer id) {
 
         Contact contact;
-		try {
-			contact = this.simpleJdbcTemplate.queryForObject(
-					SQL_SELECT + "WHERE id=?",
-					BeanPropertyRowMapper.newInstance(Contact.class),
-					id);
-		}
-		catch (EmptyResultDataAccessException ex) {
-			throw new ObjectRetrievalFailureException(Contact.class, id);
-		}
+        try {
+            contact = this.simpleJdbcTemplate.queryForObject(SQL_SELECT + "WHERE id=?",
+                    BeanPropertyRowMapper.newInstance(Contact.class), id);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new ObjectRetrievalFailureException(Contact.class, id);
+        }
 
         return contact;
     }
@@ -63,12 +56,12 @@ public class JdbcContactErrorDao implements ContactErrorDao {
     @Transactional(readOnly = true)
     public List<Contact> searchForContact(String criteria) {
 
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("criteria","%" + criteria + "%");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("criteria", "%" + criteria + "%");
 
-        List<Contact> contacts = this.simpleJdbcTemplate.query(
-				SQL_SELECT + "WHERE first_name LIKE :criteria OR last_name LIKE :criteria  OR middle_name LIKE :criteria  OR email_address LIKE :criteria",
-				BeanPropertyRowMapper.newInstance(Contact.class), params);
+        List<Contact> contacts = this.simpleJdbcTemplate.query(SQL_SELECT
+                + "WHERE first_name LIKE :criteria OR last_name LIKE :criteria  OR middle_name LIKE :criteria  OR email_address LIKE :criteria",
+                BeanPropertyRowMapper.newInstance(Contact.class), params);
 
         return contacts;
     }
@@ -76,13 +69,11 @@ public class JdbcContactErrorDao implements ContactErrorDao {
     @Transactional(readOnly = true)
     public List<Contact> listAll() {
 
-        List<Contact> contacts = this.simpleJdbcTemplate.query(
-				SQL_SELECT + "ORDER BY id DESC",
-				BeanPropertyRowMapper.newInstance(Contact.class));
+        List<Contact> contacts = this.simpleJdbcTemplate.query(SQL_SELECT + "ORDER BY id DESC",
+                BeanPropertyRowMapper.newInstance(Contact.class));
 
         return contacts;
     }
-
 
     @Override
     @Transactional
@@ -91,10 +82,8 @@ public class JdbcContactErrorDao implements ContactErrorDao {
         this.simpleJdbcTemplate.update(SQL_DELETE, id);
     }
 
-
-
     @Override
-    public Contact addContactError(Contact contact,String reason) {
+    public Contact addContactError(Contact contact, String reason) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("first_name", contact.getFirstName());
         params.put("last_name", contact.getLastName());
@@ -102,34 +91,33 @@ public class JdbcContactErrorDao implements ContactErrorDao {
         params.put("pf_number", formatPFNumber(Integer.parseInt(contact.getPfNumber())));
         params.put("email_address", contact.getEmailAddress());
         params.put("id_number", contact.getIdNumber());
+        params.put("kra_num", contact.getKraPinNumber());
         params.put("other", reason);
 
         List<Contact> cList = this.searchForContactByPf(formatPFNumber(Integer.parseInt(contact.getPfNumber())));
-          if(cList.size() <= 0) {
+        if (cList.size() <= 0) {
             Number newId = this.simpleInsert.executeAndReturnKey(params);
             contact.setId(newId.intValue());
             return contact;
 
-          }
+        }
         return null;
     }
 
     @Override
     public List<Contact> searchForContactByPf(String pf_number) {
-        
-        Map<String,String> params = new HashMap<String,String>();
+
+        Map<String, String> params = new HashMap<String, String>();
         params.put("criteria", pf_number);
 
-        List<Contact> contacts = this.simpleJdbcTemplate.query(
-                SQL_SELECT + "WHERE pf_number LIKE :criteria",
+        List<Contact> contacts = this.simpleJdbcTemplate.query(SQL_SELECT + "WHERE pf_number LIKE :criteria",
                 BeanPropertyRowMapper.newInstance(Contact.class), params);
 
         return contacts;
 
     }
 
-    
-    private String formatPFNumber(Integer pf){
-            return String.format("%04d", pf);
+    private String formatPFNumber(Integer pf) {
+        return String.format("%04d", pf);
     }
 }

@@ -39,51 +39,24 @@ public class DocumentServiceImpl implements DocumentService {
             reader = new PdfReader(sourcePath);
             String page = PdfTextExtractor.getTextFromPage(reader, 1);
             String payslipText[] = page.split("\n");
-
             // for (int i = 0; i < payslipText.length; i++) {
-            // System.out.println(payslipText[i] + " ===XXXX=== "+i);
+            // System.out.println(payslipText[i] + " ===XXXX=== " + i);
             // }
 
             if (page.contains("Employee's PIN")) {
                 String p9Text[] = payslipText[8].split("Employee's PIN");
-                // System.out.print("2=====xxxxxxxxxxxxxxxxxxxxxName of Employee========" +
-                // p9Text[0].trim());
-                System.out.println("2=====xxxxxxxxxxxxxxxxxxx PF Number========" + p9Text[1].trim());
-                System.out.println("-------------------------------------");
                 data.setPinNumber(p9Text[1].trim());
                 data.setEmpName(p9Text[0].trim());
+                data.setP9Period(payslipText[3]);
             }
 
             if (page.contains("Employee No.")) {
-
-                if (payslipText.length > 1) {
-                    pfNumberRow = payslipText[1].split("Employee No.");
-                    if (pfNumberRow.length > 1) {
-                        // System.out.print(payslipText[1]+"^==='"+sourcePath+" HAS
-                        // PF===============ffffffffffffffffffffffffff===========================" +
-                        // pfNumberRow[1].trim()+"\n");
-                    } else {
-                        // System.out.print(sourcePath+" No PFN
-                        // ===============--------------------==========================="+"\n");
-                    }
-
-                } else {
-                    // System.out.print(" No text
-                    // yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy================="
-                    // +sourcePath +"\n");
-                }
-                // System.out.println("333=====xxxxxxxxxxxxxxxxxxxxxKRA PIN of Employee========"
-                // + data.getPinNumber());
-
+                pfNumberRow = payslipText[1].split("Employee No.");
                 if (pfNumberRow.length > 1 && StringUtils.isNotBlank(pfNumberRow[1])
-                        && (StringUtils.isNotEmpty(pfNumberRow[1]) || StringUtils.isNotEmpty(data.getPinNumber()))) {
+                        && (StringUtils.isNotEmpty(pfNumberRow[1]))) {
                     data.setPfNumber(pfNumberRow[1].trim());
-                    if (StringUtils.isEmpty(data.getPinNumber()))
-                        data.setEmpName(payslipText[2].trim());
+                    data.setEmpName(payslipText[2].trim());
                     data.setPayPeriod(payslipText[3].trim());
-                    // System.out.print(data.getEmpName() + "====444=====xxxxxxxxxxxxxxxxxxxxxKRA
-                    // PIN of Employee========"
-                    // + data.getPinNumber());
                 } else {
 
                     return null;
@@ -95,6 +68,8 @@ public class DocumentServiceImpl implements DocumentService {
         } finally {
             reader.close();
         }
+        // System.out.println(data.getPinNumber() + " ===XXXX=== " + data.getPfNumber()
+        // + "===" + data.getEmpName());
         return data;
     }
 
@@ -122,6 +97,7 @@ public class DocumentServiceImpl implements DocumentService {
         File folder = new File(source);
         File[] listOfFiles = folder.listFiles();
         String encryptedFilePath = "";
+        String searchKey = "";
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
@@ -134,36 +110,51 @@ public class DocumentServiceImpl implements DocumentService {
                 if (exists) {
                     try {
                         PayslipData data = this.getPFNumber(filePath);
-                        String newperiod = data.getPayPeriod().replace(" - ", "_");
-                        newperiod = newperiod.replace("Period: ", "");
-                        // =exxxxxxxxxxxxxxxxxxxxxeeeegetPayPeriod=" + data.getPayPeriod());
-                        if (data != null) {
+                        String newperiod = StringUtils.isNotBlank(data.getPayPeriod())
+                                ? data.getPayPeriod().replace(" - ", "_")
+                                : null;
+                        newperiod = StringUtils.isNotBlank(newperiod) ? newperiod.replace("Period: ", "") : null;
 
-                            encryptedFilePath = destination + newperiod + "_" + data.getPfNumber().trim() + ".pdf";
-                            System.out
-                                    .print("encryptedFilePathencryptedFilePathencryptedFilePath==" + encryptedFilePath);
+                        if (data != null && (StringUtils.isNotBlank(data.getPfNumber())
+                                || StringUtils.isNotBlank(data.getPinNumber()))) {
+
+                            if (StringUtils.isNotBlank(data.getPfNumber())) {
+                                encryptedFilePath = destination + newperiod + "_" + data.getPfNumber().trim() + ".pdf";
+                                searchKey = data.getPfNumber().trim();
+
+                            }
+                            if (StringUtils.isNotBlank(data.getPinNumber())) {
+                                encryptedFilePath = destination + data.getP9Period().replace(" ", "_") + "_"
+                                        + data.getPinNumber().trim() + ".pdf";
+                                searchKey = data.getPinNumber().trim();
+
+                            }
 
                             try {
-                                List<Contact> contacts = null;
-                                contacts = contactService.searchContactByPf(data.getPfNumber());
-                                if (contacts.size() > 0) {
-                                    String userPWD = contacts.get(0).getIdNumber().trim();
-                                    String ownPWD = contacts.get(0).getIdNumber().trim();
-                                    Encrypt.encryptPdf(filePath, encryptedFilePath, userPWD, ownPWD);
-                                    // Remove from no contacts after resenting it
-                                    if (StringUtils.contains(filePath, "no_contacts")) {
-                                        this.deleteFile(filePath);
-                                    }
-                                } else {
-                                    try {
-                                        File newFile = new File(movedFile);
-                                        boolean existsOnNewDir = newFile.exists();
-                                        if (!existsOnNewDir) {
-                                            FileUtils.moveFile(varTmpDir, newFile);
+                                if (StringUtils.isNotBlank(data.getEmpName())) {
+
+                                    List<Contact> contacts = null;
+                                    contacts = contactService.searchContactByPf(searchKey);
+                                    if (contacts.size() > 0) {
+                                        String userPWD = contacts.get(0).getIdNumber().trim();
+                                        String ownPWD = contacts.get(0).getIdNumber().trim();
+                                        Encrypt.encryptPdf(filePath, encryptedFilePath, userPWD, ownPWD);
+                                        // Remove from no contacts after resenting it
+                                        if (StringUtils.contains(filePath, "no_contacts")) {
+                                            this.deleteFile(filePath);
+                                        }
+                                    } else {
+                                        try {
+                                            File newFile = new File(movedFile);
+                                            boolean existsOnNewDir = newFile.exists();
+                                            if (!existsOnNewDir) {
+                                                FileUtils.moveFile(varTmpDir, newFile);
+                                            }
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
                                     }
 
                                 }
@@ -173,7 +164,8 @@ public class DocumentServiceImpl implements DocumentService {
 
                             }
                         } else {
-                            System.out.print(filePath);
+                            System.out.println("deleted " + filePath);
+                            deleteFile(filePath);
                         }
 
                     } catch (Exception e) {
