@@ -156,7 +156,7 @@ public class JdbcContactDao implements ContactDao {
                 contact.setPfNumber(rs.getString("pf_number"));
                 contact.setFirstName(rs.getString("first_name"));
                 contact.setMiddleName(rs.getString("middle_name"));
-                contact.setLastName(rs.getString("last_name"));s
+                contact.setLastName(rs.getString("last_name"));
                 contact.setIdNumber(rs.getString("id_number"));
                 contact.setKraPinNumber(rs.getString("kra_num"));
                 return contact;

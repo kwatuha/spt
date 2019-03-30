@@ -161,7 +161,6 @@ public class ComServiceImpl implements ComService {
             if (contacts.size() == 1) {
                 contactsWithPendingData.add(contacts.get(0));
             }
-            // System.out.println(searchKys[0] + "==DDD^^^^^^^^DDDDD==" );
         }
 
         return contactsWithPendingData;
