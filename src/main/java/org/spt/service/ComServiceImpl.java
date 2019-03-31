@@ -75,6 +75,11 @@ public class ComServiceImpl implements ComService {
             }
             String emailSubject = getEmailSubject(filename);
             message.setSubject(emailSubject);
+            String bodyPartDescription = "payslip";
+            if (emailSubject.contains("Tax")) {
+                bodyPartDescription = "P9 report";
+
+            }
 
             // Create a multipar message
             Multipart multipart = new MimeMultipart();
@@ -83,7 +88,7 @@ public class ComServiceImpl implements ComService {
             BodyPart messageBodyPart = new MimeBodyPart();
 
             // message is set to empty
-            messageBodyPart.setText("Please find attached payslip. Use your ID Number to open it.");
+            messageBodyPart.setText("Please find attached " + bodyPartDescription + ". Use your ID Number to open it.");
 
             // Create a multipar message
             multipart.addBodyPart(messageBodyPart);
@@ -108,7 +113,8 @@ public class ComServiceImpl implements ComService {
         } catch (Exception e) {
             logger.info("Error Occurred while trying to send the email");
             List<Contact> contacts = this.contactService.searchForContact(sendTo);
-            logger.info(contacts.size() + "==ssssssssssssssssssssss==" + contacts.get(0).getPfNumber());
+            // logger.info(contacts.size() + "==ssssssssssssssssssssss==" +
+            // contacts.get(0).getPfNumber());
             e.printStackTrace();
 
         }
@@ -172,11 +178,38 @@ public class ComServiceImpl implements ComService {
         int i = filename.lastIndexOf(File.separatorChar);
         String f = filename.substring(i + 1).split(".pdf")[0];
         if (f.contains("TAX")) {
-            return f.replace("_", " ");
+            int ip = f.lastIndexOf("_");
+            String fs = f.substring(0, ip);
+            String title = fs.replace("_", " ");
+            return titleCaseConversion(title);
         } else {
             String period[] = filename.substring(i + 1).split("_");
             return period[0] + " " + period[1] + " Payslip";
         }
+    }
+
+    private String titleCaseConversion(String inputString) {
+        if (StringUtils.isBlank(inputString)) {
+            return "";
+        }
+
+        if (StringUtils.length(inputString) == 1) {
+            return inputString.toUpperCase();
+        }
+
+        StringBuffer resultPlaceHolder = new StringBuffer(inputString.length());
+
+        String stringPart[] = inputString.split(" ");
+        for (int i = 0; i < stringPart.length; i++) {
+            if (stringPart.length > 1)
+                resultPlaceHolder.append(stringPart[i].substring(0, 1).toUpperCase())
+                        .append(stringPart[i].substring(1).toLowerCase());
+            else
+                resultPlaceHolder.append(stringPart[i].toUpperCase());
+
+            resultPlaceHolder.append(" ");
+        }
+        return StringUtils.trim(resultPlaceHolder.toString());
     }
 
 }

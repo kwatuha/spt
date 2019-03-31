@@ -140,10 +140,7 @@ public class DocumentServiceImpl implements DocumentService {
                                         String userPWD = contacts.get(0).getIdNumber().trim();
                                         String ownPWD = contacts.get(0).getIdNumber().trim();
                                         Encrypt.encryptPdf(filePath, encryptedFilePath, userPWD, ownPWD);
-                                        // Remove from no contacts after resenting it
-                                        if (StringUtils.contains(filePath, "no_contacts")) {
-                                            this.deleteFile(filePath);
-                                        }
+                                        this.deleteFile(filePath);
                                     } else {
                                         try {
                                             File newFile = new File(movedFile);
@@ -151,6 +148,7 @@ public class DocumentServiceImpl implements DocumentService {
                                             if (!existsOnNewDir) {
                                                 FileUtils.moveFile(varTmpDir, newFile);
                                             }
+                                            this.deleteFile(filePath);
 
                                         } catch (Exception e) {
                                             e.printStackTrace();
