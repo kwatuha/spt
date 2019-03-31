@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+
+import com.mysql.jdbc.StringUtils;
+
 import java.util.*;
 
 /**
@@ -85,22 +88,39 @@ public class JdbcContactErrorDao implements ContactErrorDao {
     @Override
     public Contact addContactError(Contact contact, String reason) {
         Map<String, Object> params = new HashMap<String, Object>();
+        String pfprovided = StringUtils.isEmptyOrWhitespaceOnly(contact.getPfNumber()) ? null : contact.getPfNumber();
+        pfprovided = StringUtils.isNullOrEmpty(pfprovided) ? null
+                : formatPFNumber(Integer.parseInt(contact.getPfNumber()));
+
         params.put("first_name", contact.getFirstName());
         params.put("last_name", contact.getLastName());
         params.put("middle_name", contact.getMiddleName());
-        params.put("pf_number", formatPFNumber(Integer.parseInt(contact.getPfNumber())));
+        params.put("pf_number", pfprovided);
         params.put("email_address", contact.getEmailAddress());
         params.put("id_number", contact.getIdNumber());
         params.put("kra_num", contact.getKraPinNumber());
         params.put("other", reason);
 
-        List<Contact> cList = this.searchForContactByPf(formatPFNumber(Integer.parseInt(contact.getPfNumber())));
-        if (cList.size() <= 0) {
-            Number newId = this.simpleInsert.executeAndReturnKey(params);
-            contact.setId(newId.intValue());
-            return contact;
+        String searchKey = null;
+
+        if (!StringUtils.isNullOrEmpty(pfprovided) || !StringUtils.isNullOrEmpty(contact.getKraPinNumber())) {
+
+            if (!StringUtils.isNullOrEmpty(contact.getKraPinNumber()))
+                searchKey = contact.getKraPinNumber();
+
+            if (!StringUtils.isNullOrEmpty(pfprovided))
+                searchKey = pfprovided;
+
+            List<Contact> cList = this.searchForContactByPf(searchKey);
+            if (cList.size() <= 0) {
+                Number newId = this.simpleInsert.executeAndReturnKey(params);
+                contact.setId(newId.intValue());
+                return contact;
+
+            }
 
         }
+
         return null;
     }
 
