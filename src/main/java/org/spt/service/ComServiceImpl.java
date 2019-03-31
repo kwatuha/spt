@@ -73,8 +73,8 @@ public class ComServiceImpl implements ComService {
                 this.documentService.deleteFile(filename);
                 return true;
             }
-
-            message.setSubject(revisedPeriod + " Payslip");
+            String emailSubject = getEmailSubject(filename);
+            message.setSubject(emailSubject);
 
             // Create a multipar message
             Multipart multipart = new MimeMultipart();
@@ -130,10 +130,11 @@ public class ComServiceImpl implements ComService {
             String searchKys[] = f.getName().substring(i + 1).split(".pdf");
             List<Contact> contacts = null;
             contacts = contactService.searchContactByPf(searchKys[0]);
+            String attachmentFilePath = attachmentsFolder + f.getName();
             if (contacts.size() == 1) {
 
                 try {
-                    isSent = this.sendEmail(f.getName(), username, password, contacts.get(0).getEmailAddress());
+                    isSent = this.sendEmail(attachmentFilePath, username, password, contacts.get(0).getEmailAddress());
                     if (!isSent) {
                         return isSent;
                     }
@@ -164,6 +165,18 @@ public class ComServiceImpl implements ComService {
         }
 
         return contactsWithPendingData;
+    }
+
+    private String getEmailSubject(String filename) {
+
+        int i = filename.lastIndexOf(File.separatorChar);
+        String f = filename.substring(i + 1).split(".pdf")[0];
+        if (f.contains("TAX")) {
+            return f.replace("_", " ");
+        } else {
+            String period[] = filename.substring(i + 1).split("_");
+            return period[0] + " " + period[1] + " Payslip";
+        }
     }
 
 }
