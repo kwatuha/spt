@@ -9,15 +9,16 @@ function employeeContacts() {
                     // uploadFile('Upload Contacts', 'contactUpload');
                     createUploadForm('center-info-v', 'contactUpload','Upload Contacts');
                 }
-            }, '-',
-    {
-        text: 'Delete',
-        tooltip: '',
-        iconCls: 'remove',
-        handler: function () {
-            removeQueedItemsOnconfirmation('contacts', 'Are you sure you want to delete all contacts?');
-        }
-    }, '-'];
+            }, '-'
+    // {
+    //     text: 'Delete',
+    //     tooltip: '',
+    //     iconCls: 'remove',
+    //     handler: function () {
+    //         removeQueedItemsOnconfirmation('contacts', 'Are you sure you want to delete all contacts?');
+    //     }
+    // }, '-'
+];
     createDisplayView( 'contacts','center-info-v','Employee Contact',toolBars);
    
 }

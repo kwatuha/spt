@@ -30,8 +30,10 @@ public class FileUploadController {
     private ContactService contactService;
     @Autowired
     private DocumentService documentService;
+
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody    String create(FileUploadBean uploadItem, BindingResult result) throws IOException,DocumentException{
+    public @ResponseBody String create(FileUploadBean uploadItem, BindingResult result)
+            throws IOException, DocumentException {
 
         ExtJSFormResult extjsFormResult = new ExtJSFormResult();
 
@@ -48,19 +50,20 @@ public class FileUploadController {
         InputStream fileContent = null;
         FileOutputStream out = null;
 
-        try{
-            System.out.println("dddddddddddddddddddddddddddddddddddddd"+Config.getProperty(SptConstants.GP_SPT_UPLOADED)+ uploadItem.getFile().getOriginalFilename());
-            out = new FileOutputStream(new File(Config.getProperty(SptConstants.GP_SPT_UPLOADED)+ uploadItem.getFile().getOriginalFilename()));
+        try {
+            out = new FileOutputStream(new File(
+                    Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename()));
             int read = 0;
             final byte[] bytes = new byte[1024];
-            fileContent =uploadItem.getFile().getFileItem().getInputStream();
+            fileContent = uploadItem.getFile().getFileItem().getInputStream();
             while ((read = fileContent.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
+            fileContent.close();
 
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (out != null) {
                 out.close();
             }
@@ -70,48 +73,42 @@ public class FileUploadController {
 
         }
 
-
         String fileType = FilenameUtils.getExtension(uploadItem.getFile().getOriginalFilename());
 
         // If pdf, uploading payroll file
-         if(StringUtils.equals(fileType,"pdf")){
-            try{    
-            documentService.splitPdf(
+        if (StringUtils.equals(fileType, "pdf")) {
+            try {
+                documentService.splitPdf(
                         Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename(),
-                        Config.getProperty(SptConstants.GP_SPT_QUEUED_FILE_DIR)
-                );
-            } catch (Exception e){
+                        Config.getProperty(SptConstants.GP_SPT_QUEUED_FILE_DIR));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            
-            try{
-                documentService.encryptDirFiles(
-                        Config.getProperty(SptConstants.GP_SPT_QUEUED_FILE_DIR),
+
+            try {
+                documentService.encryptDirFiles(Config.getProperty(SptConstants.GP_SPT_QUEUED_FILE_DIR),
                         Config.getProperty(SptConstants.GP_SPT_ENCRYPTED_FILE_DIR),
-                        Config.getProperty(SptConstants.GP_PF_HAS_NO_EMAIL_ADDRESS_DIR)
-                );
-            } catch(Exception e){
-                 e.printStackTrace();
+                        Config.getProperty(SptConstants.GP_PF_HAS_NO_EMAIL_ADDRESS_DIR));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
+        }
+        // If csv, uploading contacts file
+        else if (StringUtils.equals(fileType, "csv")) {
+            contactService.uploadContactsFile(
+                    Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename());
 
-
-            }
-         // If csv, uploading contacts file
-            else if (StringUtils.equals(fileType,"csv")){
-                contactService.uploadContactsFile(Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename());
-         }
-         else {
-                System.err.println("Uploading Invalid file: " + uploadItem.getFile().getOriginalFilename());
-         }
-
-        documentService.deleteFile(Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename());
+        } else {
+            System.err.println("Uploading Invalid file: " + uploadItem.getFile().getOriginalFilename());
+        }
+        fileContent.close();
+        documentService.deleteFile(
+                Config.getProperty(SptConstants.GP_SPT_UPLOADED) + uploadItem.getFile().getOriginalFilename());
         extjsFormResult.setSuccess(true);
 
         return extjsFormResult.toString();
 
     }
-
-
 
 }

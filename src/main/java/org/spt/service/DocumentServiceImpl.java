@@ -88,6 +88,7 @@ public class DocumentServiceImpl implements DocumentService {
             document.close();
             writer.close();
         }
+        reader.close();
 
     }
 
@@ -187,6 +188,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void deleteFile(String filePath) throws IOException {
-        FileUtils.forceDelete(new File(filePath));
+        File f1 = new File(filePath);
+        RandomAccessFile raf = new RandomAccessFile(f1, "rw");
+        raf.close();
+        FileUtils.forceDelete(f1);
     }
 }

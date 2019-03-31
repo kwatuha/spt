@@ -59,18 +59,8 @@ public class ContactServiceImpl implements ContactService {
                     && StringUtils.isNotBlank(contact.getIdNumber())
                     && StringUtils.isNotBlank(contact.getEmailAddress())) {
                 List<Contact> existingEmail = new ArrayList<Contact>();
-                existingEmail = this.searchForContact(contact.getEmailAddress());
+                existingEmail = this.searchContactByPf(contact.getPfNumber());
                 if (existingEmail.size() > 0) {
-                    Contact updatedConctact = new Contact();
-                    updatedConctact = existingEmail.get(0);
-                    updatedConctact.setLastName(contact.getLastName());
-                    updatedConctact.setMiddleName(contact.getMiddleName());
-                    updatedConctact.setFirstName(contact.getFirstName());
-                    updatedConctact.setPfNumber(contact.getPfNumber());
-                    updatedConctact.setIdNumber(contact.getIdNumber());
-                    updatedConctact.setKraPinNumber(contact.getKraPinNumber());
-                    contactDao.updateContact(updatedConctact);
-                    data.add(updatedConctact);
                 } else {
                     Contact newContact = contactDao.addContact(contact);
                     data.add(newContact);
@@ -141,18 +131,18 @@ public class ContactServiceImpl implements ContactService {
                         && StringUtils.isNotBlank(contact.getEmailAddress())) {
                     if (countRows > 0) {
                         List<Contact> existingEmail = new ArrayList<Contact>();
-                        existingEmail = this.searchForContact(contact.getEmailAddress());
+                        existingEmail = this.searchContactByPf(contact.getPfNumber());
 
                         if (existingEmail.size() > 0) {
-                            Contact updatedConctact = new Contact();
-                            updatedConctact = existingEmail.get(0);
-                            updatedConctact.setLastName(contact.getLastName());
-                            updatedConctact.setMiddleName(contact.getMiddleName());
-                            updatedConctact.setFirstName(contact.getFirstName());
-                            updatedConctact.setPfNumber(contact.getPfNumber());
-                            updatedConctact.setIdNumber(contact.getIdNumber());
-                            updatedConctact.setKraPinNumber(contact.getKraPinNumber());
-                            contactDao.updateContact(updatedConctact);
+                            // Contact updatedConctact = new Contact();
+                            // updatedConctact = existingEmail.get(0);
+                            // updatedConctact.setLastName(contact.getLastName());
+                            // updatedConctact.setMiddleName(contact.getMiddleName());
+                            // updatedConctact.setFirstName(contact.getFirstName());
+                            // updatedConctact.setPfNumber(contact.getPfNumber());
+                            // updatedConctact.setIdNumber(contact.getIdNumber());
+                            // updatedConctact.setKraPinNumber(contact.getKraPinNumber());
+                            // contactDao.updateContact(updatedConctact);
                         } else {
                             contactDao.addContact(contact);
                         }
